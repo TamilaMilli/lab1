@@ -1,20 +1,19 @@
-//1  Звертаємось до HTML елементів
 const input = document.getElementById('input');
 const button = document.getElementById('button');
 const info = document.getElementById('info');
 
-// 2 Задаємо дефолтне значення інпуту
-let inputValue = null;
 
 input.value = "kyiv";
 
 async function onButtonClick() {
-	inputValue = input.value;
 	
-	// 3 Задаємо параметр запиту, тобто місто, яке ввів користувач
-	const link = `https://nominatim.openstreetmap.org/search.php?format=jsonv2&city=${inputValue}`;
-	
-	// 4 Створюємо елементи в які потім запишемо дані
+	const link = `https://nominatim.openstreetmap.org/search.php?format=jsonv2&city=${input.value}`;
+
+	let response = await fetch(link);
+	let data = await response.json();
+	data = data[0];
+
+
 	let cityName = document.createElement('h2');
 	let icon = new Image;
 	let coordinates = document.createElement('div');
@@ -23,15 +22,7 @@ async function onButtonClick() {
 	let category = document.createElement('div');
 	let type = document.createElement('div');
 	let licence = document.createElement('div');
-	
-	// 5 Надсилаємо запит
-	let response = await fetch(link);
 
-	// .json() указывает объекту класса response формат, в котором мы хотим получить данные.
-	let data = await response.json();
-	data = data[0];
-
-	// 6 Записуємо дані в попередньо створені елементи
 	icon.src = data.icon;
 	cityName.textContent = `${data.display_name}`;
 	coordinates.textContent = `Latitude: ${data.lat}, longitude: ${data.lon}`;
@@ -41,9 +32,7 @@ async function onButtonClick() {
 	type.textContent = `Type: ${data.type}`;
 	licence.textContent = `Licence: ${data.licence}`;
 
-	// Додаємо всі елементи до блоку info
 	info.append(cityName, icon, coordinates, placeRank, placeId, category, type, licence);
 }
 
-// Вішаєм слухача подій на кнопку
 button.addEventListener('click', onButtonClick);
